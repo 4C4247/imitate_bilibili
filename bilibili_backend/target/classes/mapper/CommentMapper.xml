@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.bilibili.mapper.CommentMapper">
+
+    <!-- 根据视频ID查询评论 -->
+    <select id="selectByVideoId" resultType="com.example.bilibili.entity.Comment">
+        SELECT * FROM comment WHERE video_id = #{videoId} ORDER BY create_time DESC
+    </select>
+
+    <!-- 根据用户ID查询评论 -->
+    <select id="selectByUserId" resultType="com.example.bilibili.entity.Comment">
+        SELECT * FROM comment WHERE user_id = #{userId} ORDER BY create_time DESC
+    </select>
+
+    <!-- 根据父评论ID查询子评论 -->
+    <select id="selectByParentId" resultType="com.example.bilibili.entity.Comment">
+        SELECT * FROM comment WHERE parent_id = #{parentId} ORDER BY create_time ASC
+    </select>
+
+    <!-- 增加评论点赞次数 -->
+    <update id="incrementLikeCount">
+        UPDATE comment SET like_count = like_count + 1 WHERE id = #{commentId}
+    </update>
+
+</mapper>
