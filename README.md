@@ -82,4 +82,18 @@ PS：我们现在是上传所有的视频到video表中，让代码随机的在�
 可以播放视频的页面。
 
 ### 评论板块的逻辑
-1.
+开始制作评论板块，放在播放器下方，实现评论展示、发布、回复、点赞等功能。
+需求：评论列表支持一级评论和二级回复，一级评论展示用户头像、用户名、评论内容、点赞数、发布时间、回复按钮；二级回复展示在对应的一级评论下，包含回复目标用户、回复内容等；支持点击评论时间戳跳转到视频对应播放进度（与 PlayerStore 联动）；实现分页加载，用户滑倒页面底部时加载更多评论；未登录用户不能发布评论或回复，需进行权限控制。
+需要准备的内容：
+确认 UserStore 中用户认证状态已管理，检查评论表结构。
+数据库部分：
+创建 comment 表，字段包括：id（bigint，主键）、video_id（bigint，关联视频 ID）、user_id（bigint，关联评论用户 ID）、parent_id（bigint，父评论 ID，0 表示一级评论）、reply_to_user_id（bigint，回复目标用户 ID，可选）、content（text，评论内容）、like_count（int，点赞数，默认 0）、create_time（datetime，发布时间）。同时创建 comment_like 表，用于记录用户点赞的评论，避免重复点赞，字段包括：id（bigint，主键）、comment_id（bigint，关联评论 ID）、user_id（bigint，关联点赞用户 ID）、create_time（datetime，点赞时间）。D：让我先检查数据库中是否已有 comment 和 comment_like 表，若没有则创建，并添加一些测试评论数据。
+执行 SQL 语句，创建表并插入测试数据。然后重新启动后端服务，开发获取评论列表、发布评论、回复评论、点赞评论的接口。D：现在需要确保后端接口能支持分页查询评论列表，按 create_time 倒序排列，一级评论在前，二级回复紧跟在对应的一级评论后；同时实现点赞数的更新与重复点赞的拦截。
+启动后端服务，开始连接前后端，前端通过视频 ID 请求后端接口获取评论列表，默认加载第一页（比如每页 10 条）。D：现在可以通过访问 http://localhost:5174/video/[视频 ID] 来查看评论板块，测试评论是否能正常加载、发布、回复和点赞。
+前端报错：:5173/api/video/[视频 ID]/comments:1 Failed to load resource: the server responded with a status of 401 (Unauthorized) CommentService.js:xx Error posting comment: Error: Unauthorized
+还有一个问题：点击评论时间戳跳转到视频播放进度时，进度不准确，需要检查时间戳的格式转换（从 datetime 转换为视频播放的秒数），并确保与 PlayerStore 的联动逻辑正确。
+细节强调：
+强烈注意：comment 表的 id 字段定义为 bigint 类型，前端获取后需正确处理，避免 ID 显示与后端不匹配。
+未登录用户点击发布评论或回复按钮时，需弹出登录提示（可使用 Element Plus 的 Dialog 组件），引导用户登录后再操作。
+评论分页加载时，需在页面底部显示 “加载更多” 按钮或自动加载，当没有更多评论时，显示 “没有更多数据了” 的小 footer 组件（复用之前开发的组件）。
+点赞评论时，需先检查用户是否已登录，未登录则提示登录；已登录则发送点赞请求，成功后更新评论的点赞数，并改变点赞按钮的状态（比如变红色）。
