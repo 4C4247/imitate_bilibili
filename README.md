@@ -1,8 +1,4 @@
 # imitate_bilibili
-ALL OF
-# imitate_bilibili
-ALL OF
-# imitate_bilibili
 ## 关于该文档
 ![图片](https://docimg8.docs.qq.com/image/AgAAEd2RRaBYpWH02LhBra7-JWoG81hq.png?w=217&h=453)
 点击左侧分块内容，就是要做的每一部分，有多少个分块就要做多少内容。子分块为细节、步骤。
